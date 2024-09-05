@@ -8,8 +8,21 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
     container:
       image: ghcr.io/stackers-network/stn-deploy-2024.1:latest
     steps:
-      - name: Check for dockerenv file
-        run: cd /; find .
+      - name: Kick off installer
+        run: |
+           mkdir -p /etc/kolla
+           chown $USER:$USER /etc/kolla
+           cp -r /usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+           cp /usr/local/share/kolla-ansible/ansible/inventory/* .
+           kolla-genpwd
+           kolla-ansible -i all-in-one bootstrap-server
+           kolla-ansible -i all-in-one bootstrap-deploy
