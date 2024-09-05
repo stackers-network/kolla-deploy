@@ -1,3 +1,9 @@
+name: Build deploy container
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   docker:
