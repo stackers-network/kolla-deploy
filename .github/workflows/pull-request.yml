@@ -28,6 +28,7 @@ jobs:
           echo "${{ secrets.PRIVATE_SSH_KEY }}" | tr -d '\r' | ssh-add - > /dev/null
       - name: Kick off installer
         run: |
+           sleep 20000
            mkdir -p /etc/kolla
            chown $USER:$USER /etc/kolla
            cp -r /usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
