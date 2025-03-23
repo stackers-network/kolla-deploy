@@ -27,6 +27,8 @@ jobs:
            kolla-ansible install-deps
            find .
            pwd
+           ls -la ../
+           ls -la ../..
            kolla-genpwd
            kolla-ansible bootstrap-servers -i inventory/hosts
            kolla-ansible deploy -i inventory/hosts
