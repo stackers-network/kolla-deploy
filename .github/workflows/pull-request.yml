@@ -5,7 +5,8 @@ on:
     branches:
       - main
   workflow_dispatch:
-
+env:
+    ANSIBLE_FORCE_COLOR=true
 jobs:
   docker:
     runs-on: [self-hosted, linux, X64]
