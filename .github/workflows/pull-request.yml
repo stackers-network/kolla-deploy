@@ -10,7 +10,7 @@ on:
 
 jobs:
   docker:
-    runs-on: self-hosted
+    runs-on: Default
     services:
       docker:
         image: docker:dind
