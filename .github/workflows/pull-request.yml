@@ -27,14 +27,17 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-      - name: Kick off installer
+      - name: Kick off deploy
         run: |
            mkdir -p /etc/kolla
            chown $USER:$USER /etc/kolla
-           cp -r /usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+           echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+           chmod 600 /etc/kolla/passwords.yml
            cp globals.yml /etc/kolla/globals.yml
-           #cp /usr/local/share/kolla-ansible/ansible/inventory/* .
            kolla-ansible install-deps
-           kolla-genpwd
+           #kolla-genpwd
+           # For initial bootstrap
            kolla-ansible bootstrap-servers -i inventory/hosts
            kolla-ansible deploy -i inventory/hosts
+           # After initial bootstrap, reconfigure the deployment
+           # kolla-ansible reconfigure -i inventory/hosts
