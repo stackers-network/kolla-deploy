@@ -24,9 +24,9 @@ jobs:
         run: |
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
-          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa"
           chmod 600 ~/.ssh/id_rsa
-          echo "${{ secrets.PRIVATE_SSH_KEY }} | tr -d '\r' | ssh-add - > /dev/null
+          echo "${{ secrets.PRIVATE_SSH_KEY }} | tr -d '\r' | ssh-add - > /dev/null"
       - name: Kick off installer
         run: |
            mkdir -p /etc/kolla
