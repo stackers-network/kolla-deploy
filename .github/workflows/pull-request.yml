@@ -39,5 +39,6 @@ jobs:
            ls -la ../
            ls -la ../..
            kolla-genpwd
+           sleep 20000
            kolla-ansible bootstrap-servers -i inventory/hosts
            kolla-ansible deploy -i inventory/hosts

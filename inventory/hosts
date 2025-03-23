@@ -28,7 +28,7 @@
 #compute01 neutron_external_interface=eth0 api_interface=em1 tunnel_interface=em1
 
 [storage]
-storage01
+10.0.200.14
 
 [deployment]
 localhost       ansible_connection=local
