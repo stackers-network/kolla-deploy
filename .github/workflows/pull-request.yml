@@ -24,7 +24,6 @@ jobs:
         run: |
           eval $(ssh-agent -s)
           mkdir -p ~/.ssh
-          dnf install -y coreutils-single
           echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
       - name: Kick off installer
@@ -32,6 +31,7 @@ jobs:
            mkdir -p /etc/kolla
            chown $USER:$USER /etc/kolla
            cp -r /usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
+           cp globals.yml /etc/kolla/globals.yml
            #cp /usr/local/share/kolla-ansible/ansible/inventory/* .
            kolla-ansible install-deps
            kolla-genpwd
