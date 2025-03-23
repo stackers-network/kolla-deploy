@@ -22,11 +22,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Set up SSH
         run: |
+          eval $(ssh-agent -s)
           mkdir -p ~/.ssh
           echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Add GitHub's SSH key to known_hosts to avoid verification prompts
-          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+          echo "${{ secrets.PRIVATE_SSH_KEY }} | tr -d '\r' | ssh-add - > /dev/null
       - name: Kick off installer
         run: |
            mkdir -p /etc/kolla
