@@ -6,8 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-
-
 jobs:
   docker:
     runs-on: [self-hosted, linux, X64]
@@ -25,8 +23,8 @@ jobs:
            mkdir -p /etc/kolla
            chown $USER:$USER /etc/kolla
            cp -r /usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
-           cp /usr/local/share/kolla-ansible/ansible/inventory/* .
+           #cp /usr/local/share/kolla-ansible/ansible/inventory/* .
            kolla-ansible install-deps
            kolla-genpwd
            kolla-ansible -i all-in-one bootstrap-servers
-           kolla-ansible -i all-in-one deploy
+           kolla-ansible -i inventory/hosts deploy
