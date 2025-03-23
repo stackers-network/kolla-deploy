@@ -16,7 +16,7 @@ jobs:
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock:ro
     container:
-      image: ghcr.io/stackers-network/stn-deploy-2024.1:latest
+      image: ghcr.io/stackers-network/stn-deploy-2024.2:latest
     steps:
       - name: Kick off installer
         run: |
