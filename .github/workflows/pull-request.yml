@@ -40,4 +40,4 @@ jobs:
            #kolla-ansible bootstrap-servers -i inventory/hosts
            #kolla-ansible deploy -i inventory/hosts
            # After initial bootstrap, reconfigure the deployment
-           kolla-ansible reconfigure -i inventory/hosts
+           ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/hosts
