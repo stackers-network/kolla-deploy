@@ -37,7 +37,7 @@ jobs:
            kolla-ansible install-deps
            #kolla-genpwd
            # For initial bootstrap
-           kolla-ansible bootstrap-servers -i inventory/hosts
-           kolla-ansible deploy -i inventory/hosts
+           #kolla-ansible bootstrap-servers -i inventory/hosts
+           #kolla-ansible deploy -i inventory/hosts
            # After initial bootstrap, reconfigure the deployment
            # kolla-ansible reconfigure -i inventory/hosts
