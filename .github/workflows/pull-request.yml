@@ -26,5 +26,5 @@ jobs:
            #cp /usr/local/share/kolla-ansible/ansible/inventory/* .
            kolla-ansible install-deps
            kolla-genpwd
-           kolla-ansible -i all-in-one bootstrap-servers
+           kolla-ansible -i inventory/hosts bootstrap-servers
            kolla-ansible -i inventory/hosts deploy
