@@ -34,11 +34,6 @@ jobs:
            cp -r /usr/local/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
            #cp /usr/local/share/kolla-ansible/ansible/inventory/* .
            kolla-ansible install-deps
-           find .
-           pwd
-           ls -la ../
-           ls -la ../..
            kolla-genpwd
-           sleep 20000
            kolla-ansible bootstrap-servers -i inventory/hosts
            kolla-ansible deploy -i inventory/hosts
