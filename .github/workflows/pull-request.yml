@@ -20,7 +20,7 @@ jobs:
       image: ghcr.io/stackers-network/stn-deploy-2024.2:latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up SSH
         run: |
           eval $(ssh-agent -s)
