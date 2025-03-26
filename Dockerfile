@@ -1,1 +1,2 @@
-FROM ghcr.io/stackers-network/stn-deploy-2024.1:latest
+FROM ghcr.io/stackers-network/stn-deploy-2024.2:latest
+
