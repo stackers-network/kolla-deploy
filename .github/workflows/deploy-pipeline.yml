@@ -48,15 +48,15 @@ jobs:
           # install kolla globals
           cp -vR kolla/* /etc/kolla/
           # install kolla overrides
-          cp -vR overrides/${{ env.environment }}/* /etc/kolla/
+          cp -vR overrides/dev/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
-            kolla-ansible bootstrap-servers -i configs/dev/hosts
-            kolla-ansible deploy -i configs/dev/hosts
+            kolla-ansible bootstrap-servers -i inventory/dev/
+            kolla-ansible deploy -i inventory/dev/
           else
             # Regular reconfiguration
-            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i configs/dev/hosts
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev/
           fi
 
   deploy-prod:
@@ -100,13 +100,13 @@ jobs:
           # install kolla globals
           cp -vR kolla/* /etc/kolla/
           # install kolla overrides
-          cp -vR overrides/${{ env.environment }}/* /etc/kolla/
+          cp -vR overrides/prod/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
-            kolla-ansible bootstrap-servers -i configs/prod/hosts
-            kolla-ansible deploy -i configs/prod/hosts
+            kolla-ansible bootstrap-servers -i inventory/prod/
+            kolla-ansible deploy -i inventory/prod/
           else
             # Regular reconfiguration  
-            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i configs/prod/hosts
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/prod/
           fi
