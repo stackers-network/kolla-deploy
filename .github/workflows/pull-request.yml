@@ -1,15 +1,28 @@
-name: Build deploy container
+name: OpenStack Deployment
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - dev-infra
+          - prod
+          - prod-infra
 env:
   ANSIBLE_FORCE_COLOR: true
 jobs:
-  docker:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment || 'dev' }}
     runs-on: [self-hosted, linux, X64]
+    environment: ${{ github.event.inputs.environment || 'dev' }}
     services:
       docker:
         image: docker:dind
@@ -29,15 +42,71 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
       - name: Kick off deploy
         run: |
-           mkdir -p /etc/kolla
-           chown $USER:$USER /etc/kolla
-           echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
-           chmod 600 /etc/kolla/passwords.yml
-           cp globals.yml /etc/kolla/globals.yml
-           kolla-ansible install-deps
-           #kolla-genpwd
-           # For initial bootstrap
-           #kolla-ansible bootstrap-servers -i inventory/hosts
-           #kolla-ansible deploy -i inventory/hosts
-           # After initial bootstrap, reconfigure the deployment
-           ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/hosts
+          mkdir -p /etc/kolla
+          chown $USER:$USER /etc/kolla
+          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+          chmod 600 /etc/kolla/passwords.yml
+          cp globals/${{ github.event.inputs.environment || 'dev' }}.yml /etc/kolla/globals.yml
+          kolla-ansible install-deps
+          # For initial bootstrap
+          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
+            kolla-ansible bootstrap-servers -i inventory/${{ github.event.inputs.environment || 'dev' }}/hosts
+            kolla-ansible deploy -i inventory/${{ github.event.inputs.environment || 'dev' }}/hosts
+          else
+            # After initial bootstrap, reconfigure the deployment
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/${{ github.event.inputs.environment || 'dev' }}/hosts
+          fi
+
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to validate against'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - dev-infra
+          - prod
+          - prod-infra
+env:
+  ANSIBLE_FORCE_COLOR: true
+jobs:
+  validate:
+    name: Validate against ${{ github.event.inputs.environment || 'dev' }}
+    runs-on: [self-hosted, linux, X64]
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+    container:
+      image: ghcr.io/stackers-network/stn-deploy-2024.2:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up SSH
+        run: |
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      - name: Validate configuration
+        run: |
+          mkdir -p /etc/kolla
+          chown $USER:$USER /etc/kolla
+          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+          chmod 600 /etc/kolla/passwords.yml
+          cp configs/${{ github.event.inputs.environment || 'dev' }}/globals.yml /etc/kolla/globals.yml
+          kolla-ansible install-deps
+          # Run check only - validates without making changes
+          kolla-ansible prechecks -i configs/${{ github.event.inputs.environment || 'dev' }}/hosts
+          kolla-ansible check -i configs/${{ github.event.inputs.environment || 'dev' }}/hosts
