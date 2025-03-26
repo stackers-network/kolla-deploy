@@ -48,7 +48,7 @@ jobs:
           # install kolla globals
           cp -vR kolla/* /etc/kolla/
           # install kolla overrides
-          cp -vR overrides/${{ job.environment }}/* /etc/kolla/
+          cp -vR overrides/${{ env }}/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
@@ -100,7 +100,7 @@ jobs:
           # install kolla globals
           cp -vR kolla/* /etc/kolla/
           # install kolla overrides
-          cp -vR overrides/${{ job.environment }}/* /etc/kolla/
+          cp -vR overrides/${{ env }}/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
