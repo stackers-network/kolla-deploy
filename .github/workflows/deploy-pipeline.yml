@@ -1,0 +1,106 @@
+name: OpenStack Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      skip_dev:
+        description: 'Skip development deployment (Use with caution!)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  ANSIBLE_FORCE_COLOR: true
+
+jobs:
+  deploy-dev:
+    name: Deploy to Dev
+    runs-on: [self-hosted, linux, X64]
+    environment: dev
+    if: ${{ github.event.inputs.skip_dev != true }}
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+    container:
+      image: ghcr.io/stackers-network/stn-deploy-2024.2:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up SSH
+        run: |
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      - name: Deploy to Dev
+        id: deploy
+        run: |
+          mkdir -p /etc/kolla
+          chown $USER:$USER /etc/kolla
+          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+          chmod 600 /etc/kolla/passwords.yml
+          cp configs/dev/globals.yml /etc/kolla/globals.yml
+          kolla-ansible install-deps
+          # Check if bootstrap is required
+          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
+            kolla-ansible bootstrap-servers -i configs/dev/hosts
+            kolla-ansible deploy -i configs/dev/hosts
+          else
+            # Regular reconfiguration
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i configs/dev/hosts
+          fi
+
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: [self-hosted, linux, X64]
+    environment: prod
+    needs: [deploy-dev]
+    # If skip_dev is true, this job will run without waiting for deploy-dev
+    if: ${{ always() && (github.event.inputs.skip_dev || success()) }}
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged --shm-size=2g
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+    container:
+      image: ghcr.io/stackers-network/stn-deploy-2024.2:latest
+    steps:
+      - name: Check previous job status
+        if: ${{ github.event.inputs.skip_dev == true || contains(needs.deploy-dev.result, 'success') }}
+        run: echo "Proceeding with Production deployment"
+      - name: Fail if dev deployment failed and not skipped
+        if: ${{ github.event.inputs.skip_dev != true && !contains(needs.deploy-dev.result, 'success') }}
+        run: |
+          echo "Dev deployment failed or was cancelled. Production deployment aborted."
+          exit 1
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up SSH
+        run: |
+          eval $(ssh-agent -s)
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+      - name: Deploy to Production
+        run: |
+          mkdir -p /etc/kolla
+          chown $USER:$USER /etc/kolla
+          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+          chmod 600 /etc/kolla/passwords.yml
+          cp configs/prod/globals.yml /etc/kolla/globals.yml
+          kolla-ansible install-deps
+          # Check if bootstrap is required
+          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
+            kolla-ansible bootstrap-servers -i configs/prod/hosts
+            kolla-ansible deploy -i configs/prod/hosts
+          else
+            # Regular reconfiguration  
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i configs/prod/hosts
+          fi
