@@ -45,7 +45,10 @@ jobs:
           chown $USER:$USER /etc/kolla
           echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
           chmod 600 /etc/kolla/passwords.yml
-          cp configs/dev/globals.yml /etc/kolla/globals.yml
+          # install kolla globals
+          cp -vR kolla/* /etc/kolla/
+          # install kolla overrides
+          cp -vR overrides/$GITHUB_ENV/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
@@ -94,7 +97,10 @@ jobs:
           chown $USER:$USER /etc/kolla
           echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
           chmod 600 /etc/kolla/passwords.yml
-          cp configs/prod/globals.yml /etc/kolla/globals.yml
+          # install kolla globals
+          cp -vR kolla/* /etc/kolla/
+          # install kolla overrides
+          cp -vR overrides/$GITHUB_ENV/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
