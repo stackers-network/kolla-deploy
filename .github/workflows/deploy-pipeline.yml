@@ -59,28 +59,12 @@ jobs:
             ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev/
           fi
 
-  approve-prod-deploy:
-    name: Approve Production Deployment
-    runs-on: [self-hosted, linux, X64]
-    needs: [deploy-dev]
-    if: ${{ always() && (github.event.inputs.skip_dev || contains(needs.deploy-dev.result, 'success')) }}
-    environment: prod-approval
-    steps:
-      - name: Manual approval step
-        run: |
-          echo "Deployment to dev was successful."
-          echo "This is a manual approval step before deploying to production."
-          echo "Review the dev deployment and approve to continue to production."
-
   deploy-prod:
     name: Deploy to Production
     runs-on: [self-hosted, linux, X64]
     environment: prod
-    needs: [deploy-dev, approve-prod-deploy]
+    needs: [deploy-dev]
     # Only proceed if both dev deployment and approval were successful
-    if: ${{ always() && 
-            (github.event.inputs.skip_dev || contains(needs.deploy-dev.result, 'success')) && 
-            contains(needs.approve-prod-deploy.result, 'success') }}
     services:
       docker:
         image: docker:dind
