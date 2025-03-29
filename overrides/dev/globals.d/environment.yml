@@ -1,3 +1,4 @@
 kolla_internal_vip_address: "10.0.200.10"
 network_interface: "ens18"
 neutron_external_interface: "ens19"
+keepalived_virtual_router_id: "101"
