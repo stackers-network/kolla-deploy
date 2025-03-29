@@ -1,1 +1,3 @@
 kolla_internal_vip_address: "10.0.200.200"
+network_interface: "eno3"
+neutron_external_interface: "eno4"
