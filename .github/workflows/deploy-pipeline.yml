@@ -20,7 +20,7 @@ jobs:
     name: Deploy to Dev Infra
     runs-on: [self-hosted, linux, X64]
     environment: dev-infra
-    if: ${{ github.event.inputs.skip_dev != true }}
+    if: ${{ github.event.inputs.skip_dev_infra != true }}
     services:
       docker:
         image: docker:dind
@@ -48,15 +48,15 @@ jobs:
           # install kolla globals
           cp -vR kolla/* /etc/kolla/
           # install kolla overrides
-          cp -vR overrides/dev/* /etc/kolla/
+          cp -vR overrides/dev-infra/* /etc/kolla/
           kolla-ansible install-deps
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
-            kolla-ansible bootstrap-servers -i inventory/dev/
-            kolla-ansible deploy -i inventory/dev/
+            kolla-ansible bootstrap-servers -i inventory/dev-infra/
+            kolla-ansible deploy -i inventory/dev-infra/
           else
             # Regular reconfiguration
-            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev/
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev-infra/
           fi
 
   deploy-dev:
