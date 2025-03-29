@@ -64,7 +64,7 @@ jobs:
     runs-on: [self-hosted, linux, X64]
     environment: dev
     if: ${{ github.event.inputs.skip_dev != true }}
-    needs: [deploy-dev]
+    needs: [deploy-dev-infra]
     services:
       docker:
         image: docker:dind
