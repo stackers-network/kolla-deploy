@@ -161,7 +161,7 @@ docker_namespace: "stackers-network/kolla-containers"
 # if vmware_nsxv3 or vmware_nsxp is selected, enable_openvswitch MUST be set to "no" (default is yes)
 # Do note linuxbridge is *EXPERIMENTAL* in Neutron since Zed and it requires extra tweaks to config to be usable.
 # For details, see: https://docs.openstack.org/neutron/latest/admin/config-experimental-framework.html
-#neutron_plugin_agent: "openvswitch"
+neutron_plugin_agent: "ovn"
 
 # Valid options are [ internal, infoblox ]
 #neutron_ipam_driver: "internal"
@@ -621,10 +621,10 @@ enable_skyline: "yes"
 # Neutron - networking options
 ##############################
 # Enable distributed floating ip for OVN deployments
-#neutron_ovn_distributed_fip: "no"
+neutron_ovn_distributed_fip: "yes"
 
 # Enable DHCP agent(s) to use with OVN
-#neutron_ovn_dhcp_agent: "no"
+neutron_ovn_dhcp_agent: "yes"
 
 #############################
 # Horizon - Dashboard Options
