@@ -1,11 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [ 
-    "config:recommended" 
+  "extends": [
+    "config:recommended"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": ["kolla/globals.yml"],
+      "customType": "regex",
+      "fileMatch": [
+        "kolla/globals.yml"
+      ],
       "matchStrings": [
         "openstack_tag:\\s*\"(?<currentValue>[^\"]+)\""
       ],
