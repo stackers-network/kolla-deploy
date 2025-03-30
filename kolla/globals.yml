@@ -43,10 +43,12 @@ kolla_base_distro: "rocky"
 openstack_release: "2024.2"
 
 # Docker image tag used by default.
-openstack_tag: "{{ openstack_release ~ openstack_tag_suffix }}"
+# openstack_tag: "{{ openstack_release ~ openstack_tag_suffix }}"
+
+openstack_tag: "2024.2-rocky-9-stn-1742694381"
 
 # Suffix applied to openstack_release to generate openstack_tag.
-openstack_tag_suffix: "-rocky-9-stn-1742694381"
+#openstack_tag_suffix: "-rocky-9-stn-1742694381"
 
 # Location of configuration overrides
 node_custom_config: "{{ node_config }}/config"
