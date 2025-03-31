@@ -15,18 +15,6 @@
       "datasourceTemplate": "docker",
       "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/nova-base",
       "versioningTemplate": "loose"
-    },
-    {
-      "customType": "regex",
-      "fileMatch": [
-        ".github/workflows/deploy-pipeline.yml"
-      ],
-      "matchStrings": [
-        "image:\\s*ghcr\\.io/stackers-network/stn-deploy-[^:]+:(?<currentValue>[0-9]+\\.[0-9]+\\.[0-9]+)"
-      ],
-      "datasourceTemplate": "docker",
-      "depNameTemplate": "ghcr.io/stackers-network/stn-deploy-2024.2",
-      "versioningTemplate": "docker"
     }
   ]
 }
