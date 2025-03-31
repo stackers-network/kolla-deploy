@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'overrides/**'
+      - 'kolla/**'
+      - 'inventory/**'
+      - '.github/workflows/deploy-pipeline.yml'
   workflow_dispatch:
     inputs:
       skip_dev:
