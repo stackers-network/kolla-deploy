@@ -13,7 +13,7 @@
         "openstack_tag:\\s*\"(?<currentValue>[^\\\"]+)\""
       ],
       "datasourceTemplate": "docker",
-      "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/nova-base",
+      "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/openstack-base",
       "versioningTemplate": "loose"
     }
   ]
