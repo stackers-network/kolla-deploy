@@ -13,8 +13,20 @@
         "openstack_tag:\\s*\"(?<currentValue>[^\\\"]+)\""
       ],
       "datasourceTemplate": "docker",
-      "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/openstack-base",
-      "versioningTemplate": "loose"
+      "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/nova-base",
+      "versioningTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        ".github/workflows/deploy-pipeline.yml"
+      ],
+      "matchStrings": [
+        "image:\\s*ghcr\\.io/stackers-network/stn-deploy-[^:]+:(?<currentValue>[^\"]+)"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/stackers-network/stn-deploy",
+      "versioningTemplate": "docker"
     }
   ]
 }
