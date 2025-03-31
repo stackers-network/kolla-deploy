@@ -10,11 +10,12 @@
         "kolla/globals.yml"
       ],
       "matchStrings": [
-        "openstack_tag:\\s*\"(?<currentValue>[^\"]+)\""
+        "openstack_tag:\\s*\"(?<currentValue>[^"]+)\""
       ],
       "datasourceTemplate": "docker",
       "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/nova-base",
       "versioningTemplate": "docker"
     }
-  ]
+  ],
+  "logLevel": "debug"
 }
