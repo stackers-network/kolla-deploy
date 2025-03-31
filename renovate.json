@@ -16,6 +16,5 @@
       "depNameTemplate": "ghcr.io/stackers-network/kolla-containers/nova-base",
       "versioningTemplate": "docker"
     }
-  ],
-  "logLevel": "debug"
+  ]
 }
