@@ -61,7 +61,7 @@ jobs:
             kolla-ansible deploy -i inventory/dev-infra/
           else
             # Regular reconfiguration
-            ANSIBLE_GATHERING=explicit kolla-ansible destroy -i inventory/dev-infra/ --yes-i-really-really-mean-it
+            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev-infra/
           fi
 
   deploy-dev:
