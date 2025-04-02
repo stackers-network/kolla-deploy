@@ -45,7 +45,7 @@ openstack_release: "2024.2"
 # Docker image tag used by default.
 # openstack_tag: "{{ openstack_release ~ openstack_tag_suffix }}"
 
-openstack_tag: "2024.2-rocky-9-stn-1743521815"
+openstack_tag: "2024.2-rocky-9-stn-1743613266"
 
 # Suffix applied to openstack_release to generate openstack_tag.
 #openstack_tag_suffix: "-rocky-9-stn-1742694381"
