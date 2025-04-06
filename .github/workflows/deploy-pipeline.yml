@@ -112,55 +112,56 @@ jobs:
             ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev/
           fi
 
-  deploy-prod:
-    name: Deploy to Production
-    runs-on: [self-hosted, linux, X64]
-    environment: prod
-    needs: [deploy-dev]
-    # Only proceed if both dev deployment and approval were successful
-    services:
-      docker:
-        image: docker:dind
-        options: --privileged --shm-size=2g
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock:ro
-    container:
-      image: ghcr.io/stackers-network/stn-deploy-2024.2:0.0.2
-    steps:
-      - name: Check previous job status
-        if: ${{ github.event.inputs.skip_dev == true || contains(needs.deploy-dev.result, 'success') }}
-        run: echo "Proceeding with Production deployment after approval"
-      - name: Fail if dev deployment failed and not skipped
-        if: ${{ github.event.inputs.skip_dev != true && !contains(needs.deploy-dev.result, 'success') }}
-        run: |
-          echo "Dev deployment failed or was cancelled. Production deployment aborted."
-          exit 1
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up SSH
-        run: |
-          eval $(ssh-agent -s)
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-      - name: Deploy to Production
-        run: |
-          mkdir -p /etc/kolla
-          chown $USER:$USER /etc/kolla
-          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
-          chmod 600 /etc/kolla/passwords.yml
-          # install kolla globals
-          cp -vR kolla/* /etc/kolla/
-          # install kolla overrides
-          cp -vR overrides/prod/* /etc/kolla/
-          kolla-ansible install-deps
-          # Check if bootstrap is required
-          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
-            kolla-ansible bootstrap-servers -i inventory/prod/
-            kolla-ansible deploy -i inventory/prod/
-          elif [[ "${{ secrets.DESTROY_REQUIRED }}" == "true" ]]; then
-            kolla-ansible destroy -i inventory/dev-infra/ --yes-i-really-really-mean-it         
-          else
-            # Regular reconfiguration  
-            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/prod/
-          fi
+#  deploy-prod:
+#    name: Deploy to Production
+#    runs-on: [self-hosted, linux, X64]
+#    environment: prod
+#    needs: [deploy-dev]
+#    # Only proceed if both dev deployment and approval were successful
+#    services:
+#      docker:
+#        image: docker:dind
+#        options: --privileged --shm-size=2g
+#        volumes:
+#          - /var/run/docker.sock:/var/run/docker.sock:ro
+#    container:
+#      image: ghcr.io/stackers-network/stn-deploy-2024.2:0.0.2
+#    steps:
+#      - name: Check previous job status
+#        if: ${{ github.event.inputs.skip_dev == true || contains(needs.deploy-dev.result, 'success') }}
+#        run: echo "Proceeding with Production deployment after approval"
+#      - name: Fail if dev deployment failed and not skipped
+#        if: ${{ github.event.inputs.skip_dev != true && !contains(needs.deploy-dev.result, 'success') }}
+#        run: |
+#          echo "Dev deployment failed or was cancelled. Production deployment aborted."
+#          exit 1
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Set up SSH
+#        run: |
+#          eval $(ssh-agent -s)
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
+#      - name: Deploy to Production
+#        run: |
+#          mkdir -p /etc/kolla
+#          chown $USER:$USER /etc/kolla
+#          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+#          chmod 600 /etc/kolla/passwords.yml
+#          # install kolla globals
+#          cp -vR kolla/* /etc/kolla/
+#          # install kolla overrides
+#          cp -vR overrides/prod/* /etc/kolla/
+#          kolla-ansible install-deps
+#          # Check if bootstrap is required
+#          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
+#            kolla-ansible bootstrap-servers -i inventory/prod/
+#            kolla-ansible deploy -i inventory/prod/
+#          elif [[ "${{ secrets.DESTROY_REQUIRED }}" == "true" ]]; then
+#            kolla-ansible destroy -i inventory/dev-infra/ --yes-i-really-really-mean-it         
+#          else
+#            # Regular reconfiguration  
+#            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/prod/
+#          fi
+#
