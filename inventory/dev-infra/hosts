@@ -115,9 +115,6 @@ control
 [horizon:children]
 control
 
-[swift:children]
-control
-
 [barbican:children]
 control
 
@@ -226,6 +223,9 @@ nova
 [nova-conductor:children]
 nova
 
+[nova-metadata:children]
+nova
+
 [nova-super-conductor:children]
 nova
 
@@ -318,19 +318,6 @@ network
 
 [manila-data:children]
 manila
-
-# Swift
-[swift-proxy-server:children]
-swift
-
-[swift-account-server:children]
-storage
-
-[swift-container-server:children]
-storage
-
-[swift-object-server:children]
-storage
 
 # Barbican
 [barbican-api:children]
@@ -603,6 +590,9 @@ ovn-database
 ovn-database
 
 [ovn-sb-db:children]
+ovn-database
+
+[ovn-sb-db-relay:children]
 ovn-database
 
 [venus-api:children]
