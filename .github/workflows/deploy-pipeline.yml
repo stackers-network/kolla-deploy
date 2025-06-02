@@ -20,58 +20,58 @@ on:
 env:
   ANSIBLE_FORCE_COLOR: true
 
-jobs:
-  deploy-dev-infra:
-    name: Deploy to Dev Infra
-    runs-on: [self-hosted, linux, X64]
-    environment: dev-infra
-    if: ${{ github.event.inputs.skip_dev_infra != true }}
-    services:
-      docker:
-        image: docker:dind
-        options: --privileged --shm-size=2g
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock:ro
-    container:
-      image: ghcr.io/stackers-network/stn-deploy-2025.1:0.0.2
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up SSH
-        run: |
-          eval $(ssh-agent -s)
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-      - name: Deploy to Dev Infra
-        id: deploy
-        run: |
-          mkdir -p /etc/kolla
-          chown $USER:$USER /etc/kolla
-          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
-          chmod 600 /etc/kolla/passwords.yml
-          # install kolla globals
-          cp -vR kolla/* /etc/kolla/
-          # install kolla overrides
-          cp -vR overrides/dev-infra/* /etc/kolla/
-          kolla-ansible install-deps
-          # Check if bootstrap is required
-          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
-            kolla-ansible bootstrap-servers -i inventory/dev-infra/
-            kolla-ansible deploy -i inventory/dev-infra/
-          elif [[ "${{ secrets.DESTROY_REQUIRED }}" == "true" ]]; then
-            kolla-ansible destroy -i inventory/dev-infra/ --yes-i-really-really-mean-it
-          else
-            # Regular reconfiguration
-            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev-infra/
-          fi
+#jobs:
+#  deploy-dev-infra:
+#    name: Deploy to Dev Infra
+#    runs-on: [self-hosted, linux, X64]
+#    environment: dev-infra
+#    if: ${{ github.event.inputs.skip_dev_infra != true }}
+#    services:
+#      docker:
+#        image: docker:dind
+#        options: --privileged --shm-size=2g
+#        volumes:
+#          - /var/run/docker.sock:/var/run/docker.sock:ro
+#    container:
+#      image: ghcr.io/stackers-network/stn-deploy-2025.1:0.0.2
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Set up SSH
+#        run: |
+#          eval $(ssh-agent -s)
+#          mkdir -p ~/.ssh
+#          echo "${{ secrets.PRIVATE_SSH_KEY }}" > ~/.ssh/id_rsa
+#          chmod 600 ~/.ssh/id_rsa
+#      - name: Deploy to Dev Infra
+#        id: deploy
+#        run: |
+#          mkdir -p /etc/kolla
+#          chown $USER:$USER /etc/kolla
+#          echo "${{ secrets.PASSWD_FILE }}" > /etc/kolla/passwords.yml
+#          chmod 600 /etc/kolla/passwords.yml
+#          # install kolla globals
+#          cp -vR kolla/* /etc/kolla/
+#          # install kolla overrides
+#          cp -vR overrides/dev-infra/* /etc/kolla/
+#          kolla-ansible install-deps
+#          # Check if bootstrap is required
+#          if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
+#            kolla-ansible bootstrap-servers -i inventory/dev-infra/
+#            kolla-ansible deploy -i inventory/dev-infra/
+#          elif [[ "${{ secrets.DESTROY_REQUIRED }}" == "true" ]]; then
+#            kolla-ansible destroy -i inventory/dev-infra/ --yes-i-really-really-mean-it
+#          else
+#            # Regular reconfiguration
+#            ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev-infra/
+#          fi
 
   deploy-dev:
     name: Deploy to Dev
     runs-on: [self-hosted, linux, X64]
     environment: dev
     if: ${{ github.event.inputs.skip_dev != true }}
-    needs: [deploy-dev-infra]
+#    needs: [deploy-dev-infra]
     services:
       docker:
         image: docker:dind
