@@ -101,6 +101,7 @@ jobs:
           # install kolla overrides
           cp -vR overrides/dev/* /etc/kolla/
           kolla-ansible install-deps
+          sleep 2000
           # Check if bootstrap is required
           if [[ "${{ secrets.BOOTSTRAP_REQUIRED }}" == "true" ]]; then
             kolla-ansible bootstrap-servers -i inventory/dev/
