@@ -20,7 +20,7 @@ on:
 env:
   ANSIBLE_FORCE_COLOR: true
 
-#jobs:
+jobs:
 #  deploy-dev-infra:
 #    name: Deploy to Dev Infra
 #    runs-on: [self-hosted, linux, X64]
