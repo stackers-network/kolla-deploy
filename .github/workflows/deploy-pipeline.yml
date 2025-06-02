@@ -106,7 +106,7 @@ jobs:
             kolla-ansible bootstrap-servers -i inventory/dev/
             kolla-ansible deploy -i inventory/dev/
           elif [[ "${{ secrets.DESTROY_REQUIRED }}" == "true" ]]; then
-            kolla-ansible destroy -i inventory/dev-infra/ --yes-i-really-really-mean-it            
+            kolla-ansible destroy -i inventory/dev/ --yes-i-really-really-mean-it            
           else
             # Regular reconfiguration
             ANSIBLE_GATHERING=explicit kolla-ansible reconfigure -i inventory/dev/
