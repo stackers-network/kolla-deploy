@@ -43,7 +43,7 @@ kolla_base_distro: "rocky"
 openstack_release: "2025.1"
 
 # Docker image tag used by default.
-openstack_tag: "2025.1-rocky-9-stn-1748739199"
+openstack_tag: "2025.1-rocky-9-stn-1756603647"
 
 # Suffix applied to openstack_release to generate openstack_tag.
 #openstack_tag_suffix: "-rocky-9-stn-1742694381"
