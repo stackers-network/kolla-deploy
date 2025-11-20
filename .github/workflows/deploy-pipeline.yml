@@ -82,7 +82,7 @@ jobs:
       image: ghcr.io/stackers-network/stn-deploy-2025.1:0.0.2
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up SSH
         run: |
           eval $(ssh-agent -s)
